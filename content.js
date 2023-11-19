@@ -30,7 +30,7 @@ const mutationCallback = (mutations, token) => {
       const taskType = taskElements.join(' ');
 
       if (!['TASK', 'BUG'].includes(taskType)) {
-        return;
+        continue;
       }
 
       getForecastUrl(token, taskId, projectName).then(

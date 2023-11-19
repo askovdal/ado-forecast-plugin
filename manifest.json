@@ -2,24 +2,18 @@
   "manifest_version": 3,
   "name": "ADO Forecast",
   "version": "1.0",
-  "description": "ADO Forecast",
+  "description": "Adds a link to the corresponding Forecast task in Azure Devops",
   "content_scripts": [
     {
       "js": ["content.js"],
       "css": ["styles.css"],
-      "matches": [
-        "https://*.visualstudio.com/*",
-        "https://dev.azure.com/*"
-      ]
+      "matches": ["https://*.visualstudio.com/*", "https://dev.azure.com/*"]
     }
   ],
   "web_accessible_resources": [
     {
       "resources": ["forecast-logo.png", "token.js"],
-      "matches": [
-        "https://*.visualstudio.com/*",
-        "https://dev.azure.com/*"
-      ]
+      "matches": ["https://*.visualstudio.com/*", "https://dev.azure.com/*"]
     }
   ]
 }
