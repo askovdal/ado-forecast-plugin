@@ -1,12 +1,7 @@
 const main = async () => {
   const { token } = await import(chrome.runtime.getURL('token.js'));
-
-  const observer = new MutationObserver((mutations) =>
-    mutationCallback(mutations, token),
-  );
-
-  const body = document.querySelector('body');
-  observer.observe(body, { childList: true, subtree: true });
+  const observer = new MutationObserver((ms) => mutationCallback(ms, token));
+  observer.observe(document.body, { childList: true, subtree: true });
 };
 
 const mutationCallback = (mutations, token) => {
@@ -41,14 +36,11 @@ const mutationCallback = (mutations, token) => {
   }
 };
 
-const getForecastUrl = async (token, taskId, projectName) => {
-  const response = await fetch(
+const getForecastUrl = (token, taskId, projectName) =>
+  fetch(
     `https://ado-forecast.onrender.com/?task_id=${taskId}&project_name=${projectName}`,
     { headers: { Authorization: `Bearer ${token}` } },
-  );
-
-  return await response.json();
-};
+  ).then((response) => response.json());
 
 const insertForecastLink = (itemHeader, url) => {
   const forecastLogo = document.createElement('img');
