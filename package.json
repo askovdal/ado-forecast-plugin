@@ -1,0 +1,20 @@
+{
+  "name": "ado-forecast-plugin",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/askovdal/ado-forecast-plugin.git"
+  },
+  "author": "Andreas Skovdal",
+  "prettier": {
+    "singleQuote": true
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.251",
+    "prettier": "^3.1.0"
+  },
+  "engines": {
+    "node": "18",
+    "npm": "10"
+  }
+}

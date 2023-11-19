@@ -1,0 +1,9 @@
+.ado-forecast {
+  display: block;
+  height: 20px;
+  margin-left: 8px;
+}
+
+.ado-forecast > img {
+  height: 100%;
+}
