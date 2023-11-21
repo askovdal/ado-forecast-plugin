@@ -1,9 +1,14 @@
 .ado-forecast {
   display: block;
-  height: 20px;
-  margin-left: 8px;
+  height: 18px;
+  margin-left: 6px;
 }
 
 .ado-forecast > img {
   height: 100%;
+}
+
+.ado-forecast.related {
+  height: 16px;
+  margin: 4px 7px 2px -2px;
 }
