@@ -28,9 +28,9 @@ const iterateItems = ({ target }, token) => {
     const taskElements = itemHeader.querySelector('a').innerText.split(' ');
     const taskId = taskElements.pop();
     const taskType = taskElements.join(' ');
-    const projectName = item.querySelector('#__bolt--Area-input').value;
+    const boardName = item.querySelector('#__bolt--Area-input').value;
 
-    setLink(taskType, token, taskId, projectName, false, (forecastLink) => {
+    setLink(taskType, token, taskId, boardName, false, (forecastLink) => {
       itemHeader.querySelector('.flex-row.flex-noshrink').after(forecastLink);
     });
   }
@@ -45,11 +45,11 @@ const iterateRelated = ({ target }, token) => {
 
     const taskType = related.querySelector('[role=img]').ariaLabel;
     const taskId = related.querySelector('.artifact-link-id').innerText;
-    const projectName = related
+    const boardName = related
       .closest('.work-item-form-page')
       .querySelector('#__bolt--Area-input').value;
 
-    setLink(taskType, token, taskId, projectName, true, (forecastLink) => {
+    setLink(taskType, token, taskId, boardName, true, (forecastLink) => {
       related
         .querySelector('.padding-right-8.text-ellipsis')
         .after(forecastLink);
@@ -65,12 +65,12 @@ const elementIsNew = (element) => {
   return true;
 };
 
-const setLink = (taskType, token, taskId, projectName, related, insert) => {
+const setLink = (taskType, token, taskId, boardName, related, insert) => {
   if (!shouldLogTimeOnTask(taskType)) {
     return;
   }
 
-  getForecastUrl(token, taskId, projectName).then((url) => {
+  getForecastUrl(token, taskId, boardName).then((url) => {
     const forecastLink = createForecastLink(url, related);
     insert(forecastLink);
   }, console.log);
@@ -79,14 +79,17 @@ const setLink = (taskType, token, taskId, projectName, related, insert) => {
 const shouldLogTimeOnTask = (taskType) =>
   ['task', 'bug'].includes(taskType.toLowerCase());
 
-const getForecastUrl = async (token, taskId, projectName) => {
+const getForecastUrl = async (token, taskId, boardName) => {
   const savedUrl = urls.get(taskId);
   if (savedUrl) {
     return savedUrl;
   }
 
+  // Escape any backslashes in the board name
+  boardName = boardName.replace('\\', '\\\\')
+
   const response = await fetch(
-    `https://ado-forecast.onrender.com/?task_id=${taskId}&project_name=${projectName}`,
+    `https://zenegy-forecast.adaptagency.com/ado-forecast?id=${taskId}&board_name=${boardName}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
 
