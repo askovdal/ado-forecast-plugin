@@ -52,7 +52,7 @@ const iterateRelated = ({ target }, token) => {
     setLink(taskType, token, taskId, boardName, true, (forecastLink) => {
       related
         .querySelector('.padding-right-8.text-ellipsis')
-        .after(forecastLink);
+        .before(forecastLink);
     });
   }
 };
