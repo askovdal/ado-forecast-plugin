@@ -4,6 +4,10 @@
   margin-left: 6px;
 }
 
+.info-text-wrapper > .ado-forecast {
+  margin: 0;
+}
+
 .ado-forecast > img {
   height: 100%;
 }
@@ -11,4 +15,14 @@
 .ado-forecast.related {
   height: 16px;
   margin: 6px 6px 5px -16px;
+}
+
+.la-additional-data:has(.ado-forecast.related) {
+  display: flex;
+  align-items: center;
+  margin: 4px 0 0;
+}
+
+.la-additional-data > .ado-forecast.related {
+  margin: 0 6px 0 1px;
 }

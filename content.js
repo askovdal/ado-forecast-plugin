@@ -12,12 +12,18 @@ const mutationCallback = (mutations, token) => {
       continue;
     }
 
-    iterateItems(mutation, token);
-    iterateRelated(mutation, token);
+    const newBoard = !document.querySelectorAll('.work-item-form-main').length;
+    if (newBoard) {
+      iterateItemsNew(mutation, token);
+      iterateRelatedNew(mutation, token);
+    } else {
+      iterateItemsOld(mutation, token);
+      iterateRelatedOld(mutation, token);
+    }
   }
 };
 
-const iterateItems = ({ target }, token) => {
+const iterateItemsNew = ({ target }, token) => {
   const items = target.querySelectorAll('.work-item-form-page');
   for (const item of items) {
     if (!elementIsNew(item)) {
@@ -36,7 +42,35 @@ const iterateItems = ({ target }, token) => {
   }
 };
 
-const iterateRelated = ({ target }, token) => {
+const iterateItemsOld = async ({ target }, token) => {
+  const items = target.querySelectorAll('.work-item-form-main');
+  for (const item of items) {
+    // Old UI is acting weird, sometimes mutations aren't registered...
+    // This looks like it fixes it most of the time
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    if (!elementIsNew(item, false)) {
+      continue;
+    }
+
+    const itemHeader = item.querySelector('.info-text-wrapper');
+    if (!itemHeader) {
+      continue;
+    }
+    elementDone(item);
+
+    const taskElements = itemHeader.querySelector('a').innerText.split(' ');
+    const taskId = taskElements.pop();
+    const taskType = taskElements.join(' ');
+    const boardName = item.querySelector('[aria-label="Area Path"]').value;
+
+    setLink(taskType, token, taskId, boardName, false, (forecastLink) => {
+      itemHeader.querySelector('a').after(forecastLink);
+    });
+  }
+};
+
+const iterateRelatedNew = ({ target }, token) => {
   const relatedList = target.querySelectorAll('.artifact-link-container');
   for (const related of relatedList) {
     if (!elementIsNew(related)) {
@@ -57,13 +91,38 @@ const iterateRelated = ({ target }, token) => {
   }
 };
 
-const elementIsNew = (element) => {
+const iterateRelatedOld = ({ target }, token) => {
+  const relatedList = target.querySelectorAll('.la-artifact-data');
+  for (const related of relatedList) {
+    if (!elementIsNew(related)) {
+      continue;
+    }
+
+    const taskType = Array.from(related.querySelector('.bowtie-icon').classList)
+      .find((c) => c.startsWith('bowtie-symbol'))
+      .split('-')
+      .pop();
+
+    const taskId = related.querySelector('a').href.split('/').pop();
+    const boardName = related
+      .closest('.work-item-form-main')
+      .querySelector('[aria-label="Area Path"]').value;
+
+    setLink(taskType, token, taskId, boardName, true, (forecastLink) => {
+      related.querySelector('.la-additional-data > div').before(forecastLink);
+    });
+  }
+};
+
+const elementIsNew = (element, setAttribute = true) => {
   if (element.hasAttribute('data-ado-forecast')) {
     return false;
   }
-  element.setAttribute('data-ado-forecast', '');
+  setAttribute && elementDone(element);
   return true;
 };
+
+const elementDone = (element) => element.setAttribute('data-ado-forecast', '');
 
 const setLink = (taskType, token, taskId, boardName, related, insert) => {
   if (!shouldLogTimeOnTask(taskType)) {
@@ -86,7 +145,7 @@ const getForecastUrl = async (token, taskId, boardName) => {
   }
 
   // Escape any backslashes in the board name
-  boardName = boardName.replace('\\', '\\\\')
+  boardName = boardName.replace('\\', '\\\\');
 
   const response = await fetch(
     `https://zenegy-forecast.adaptagency.com/ado-forecast?id=${taskId}&board_name=${boardName}`,
